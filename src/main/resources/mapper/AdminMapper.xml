@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.AdminMapper">
+    <select id="userList" resultType="staffinfo">
+        SELECT * FROM staffinfo
+
+        <where>
+            username IN (SELECT username FROM userinfo WHERE roleid = (SELECT roleid FROM roleinfo WHERE
+            rolename=#{rolename}))
+            <if test="staffinfo.name!=null and staffinfo.name!=''">
+                and name like CONCAT('%',#{staffinfo.name,jdbcType=VARCHAR},'%')
+
+            </if>
+            <if test="staffinfo.username!=null and staffinfo.username!=''">
+                and username=#{staffinfo.username}
+
+            </if>
+            <if test="staffinfo.mobilephone!=null and staffinfo.mobilephone!=''">
+                and mobilephone=#{staffinfo.mobilephone}
+
+            </if>
+            <if test="staffinfo.dept!=null and staffinfo.dept!=''">
+                and dept=#{staffinfo.dept}
+
+            </if>
+        </where>
+    </select>
+
+    <!--  动态拼接-->
+    <insert id="insertStaffinfo" parameterType="staffinfo" useGeneratedKeys="true" keyProperty="userid" keyColumn="userid">
+        insert into staffinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            username,
+            name,
+            sex,
+            dept,
+            <if test="mobilephone !=null and mobilephone!=''">
+                mobilephone,
+            </if>
+            <if test="email !=null  and email!=''">
+                email,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{username},
+            #{name},
+            #{sex},
+            #{dept},
+            <if test="mobilephone !=null and mobilephone!=''">
+                #{ mobilephone},
+            </if>
+            <if test="email !=null  and email!=''">
+                #{email},
+            </if>
+        </trim>
+
+    </insert>
+
+    <insert id="insertUserinfo" parameterType="userinfo">
+        insert into userinfo(roleid,username,staffid) values (#{roleid},#{username},#{staffid})
+    </insert>
+
+    <select id="getRoleid" resultType="java.lang.String">
+        select  roleid from roleinfo where rolename=#{rolename}
+    </select>
+    <select id="checkId" resultType="userinfo">
+        select * from userinfo where username=#{username}
+    </select>
+    <delete id="deleteStaffinfo">
+        delete
+        from staffinfo
+        where username=#{username};
+    </delete>
+    <delete id="deleteUserinfo">
+        delete
+        from userinfo
+        where username=#{username};
+    </delete>
+    <delete id="deleteFile">
+        delete
+        from document
+        where createusername=#{createusername};
+    </delete>
+    <select id="byAppuser" resultType="procurementorder">
+        select *
+        from procurementorder where appuser=#{appuser};
+    </select>
+    <delete id="deletePro">
+        delete
+        from procurementorder
+        where appuser=#{appuser};
+    </delete>
+
+    <select id="getRolename" resultType="java.lang.String">
+        SELECT rolename FROM roleinfo WHERE roleid=(SELECT roleid FROM userinfo WHERE username=#{username})
+    </select>
+
+    <update id="modifstate">
+        update projectinfo set projectstate="审核通过" where id=#{id}
+    </update>
+
+    <update id="resetPassword">
+        update userinfo
+        set password = "888888"
+        where username=#{username};
+ </update>
+
+    <update id="updateStaffinfo">
+        update staffinfo
+        set sex=#{sex} ,name=#{name},mobilephone=#{mobilephone},email=#{email},postcode=#{postcode},dept=#{dept}
+        where username=#{username};
+    </update>
+
+    <update id="updateRoleid" >
+        UPDATE userinfo SET roleid=(SELECT roleid FROM roleinfo WHERE rolename=#{rolename}) WHERE username=#{username}
+    </update>
+
+    <select id="proList" resultType="projectinfo">
+        select * from projectinfo
+        <where>
+            <if test="projectname!=null and projectname!=''">
+                and projectname like CONCAT('%',#{projectname,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="proconstractcode!=null and proconstractcode!=''">
+                and proconstractcode like CONCAT('%',#{proconstractcode,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="projectstate!=null and projectstate!=''">
+                and projectstate=#{projectstate}
+            </if>
+            <if test="infowriteman!=null and infowriteman!=''">
+                and  infowriteman=#{infowriteman}
+            </if>
+            <if test="requirecontent!=null and requirecontent!='' ">
+                and requirecontent like CONCAT('%',#{requirecontent,jdbcType=VARCHAR},'%')
+            </if>
+        </where>
+    </select>
+    
+    <delete id="deletepro" >
+        delete
+        from projectinfo
+        where id=#{id};
+    </delete>
+    <delete id="byPmid">
+        delete
+        from procurementorder
+        where pmid=#{pmid};
+    </delete>
+    <delete id="byPid">
+        delete
+        from document
+        where pid=#{pid};
+    </delete>
+</mapper>

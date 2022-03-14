@@ -1,0 +1,77 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form" lay-filter="news" id="news" enctype="multipart/form-data">
+        <div class="layui-form-item">
+            <!--            <form enctype="multipart/form-data" id="fileform">-->
+            <label class="layui-form-label required">文件：</label>
+            <div class="layui-input-block">
+                <input type="file" name="file" id="file" placeholder="多文件需求请打包上传" value="" class="layui-input" >
+
+            </div>
+
+
+
+            <div id="tishi"></div>
+
+
+            <!--            </form>-->
+
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" id="upload" lay-submit lay-filter="saveBtn">确认上传</button>
+                <button id="btn1" class="layui-btn layui-btn-normal" style="margin-left: 200px" >删除文件</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.use(['layer','form'],function () {
+        var $=layui.jquery,
+            layer=layui.layer,
+            form=layui.form,
+            element = layui.element;
+             element.init();
+             form.render();
+
+             var info=parent.htmldata;
+        form.on("submit(saveBtn)",function (obj) {
+           // console.log(obj.field)
+            if(obj.field!=''){
+                var formData = new FormData();
+                formData.append("file", $('#file')[0].files[0])
+                formData.append("filetype",info.num);
+                $.ajax({
+                    url: 'student/uploadFile',
+                    async: false,
+                    data: formData,
+                    cache: false,
+                    method: "POST",
+                    contentType: false,
+                    processData: false,
+                    success: (data) => {
+                        if (data.status == 1) {
+                            layer.msg(data.msg, {time: 2000}, function () {
+                                // location.reload();
+                               // $(window.parent.document).find('#001').children()[3].val(obj.field);
+                            })
+
+                        } else {
+                            layer.msg(data.msg)
+                        }
+                    },
+
+                })
+            }
+
+
+        })
+
+        $("#btn1").click(function () {
+
+            var obj = document.getElementById('file') ;
+            obj.outerHTML=obj.outerHTML;
+        })
+    })
+</script>

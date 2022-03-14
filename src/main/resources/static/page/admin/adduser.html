@@ -1,0 +1,110 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">用户名</label>
+            <div class="layui-input-block">
+                <input type="number" name="username" lay-verify="required" lay-reqtext="用户名不能为空" placeholder="请输入用户名" value="" class="layui-input">
+
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" lay-verify="required" lay-reqtext="姓名不能为空" placeholder="请输入姓名" value="" class="layui-input">
+
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">性别</label>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="1" title="男" checked="">
+                <input type="radio" name="sex" value="0" title="女">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label ">手机</label>
+            <div class="layui-input-block">
+                <input type="number" name="mobilephone" lay-verify="" lay-reqtext="手机不能为空" placeholder="请输入手机" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-block">
+                <input type="email" name="email" placeholder="请输入邮箱" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">所属专业</label>
+            <div class="layui-input-block">
+                <select name="dept" id="dept" lay-verify="required" class="layui-select">
+                    <option value="">请选择一个专业</option>
+                    <option value="空间信息与数字技术">空间信息与数字技术</option>
+                    <option value="软件工程">软件工程</option>
+                    <option value="计算机科学与技术">计算机科学与技术</option>
+                    <option value="信息与计算机科学">信息与计算机科学</option>
+                    <option value="数据科学与大数据技术">数据科学与大数据技术</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label required">账号类型</label>
+            <div class="layui-input-block">
+                <select name="rolename" id="rolename" lay-verify="required" class="layui-select">
+                    <option value="学生">学生</option>
+                    <option value="老师">老师</option>
+                    <option value="系主任">系主任</option>
+                    <option value="管理员">管理员</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            $ = layui.$;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+
+
+            $.ajax({
+                url:'admin/adduser',
+                data:data.field,
+                method:'POST',
+                async:false,
+                success:function (res) {
+                    if(res.status==1){
+                        layer.msg(res.msg,function () {
+                            //form.reset();
+                        })
+                    }else{
+                        layer.msg(res.msg)
+                    }
+
+                }
+            })
+
+
+            return false;
+        });
+
+    });
+</script>

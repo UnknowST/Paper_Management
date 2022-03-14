@@ -1,0 +1,186 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <!--        <fieldset class="table-search-fieldset">-->
+        <!--            <legend>搜索信息</legend>-->
+        <!--            <div style="margin: 10px 10px 10px 10px">-->
+        <!--                <form class="layui-form layui-form-pane" action="">-->
+        <!--                    <div class="layui-form-item">-->
+        <!--                        <div class="layui-inline">-->
+        <!--                            <label class="layui-form-label">论文题目</label>-->
+        <!--                            <div class="layui-input-inline">-->
+        <!--                                <input type="text" name="projectname" id="projectname" autocomplete="off" class="layui-input">-->
+        <!--                            </div>-->
+        <!--                        </div>-->
+        <!--                        <div class="layui-inline">-->
+        <!--                            <label class="layui-form-label">老师</label>-->
+        <!--                            <div class="layui-input-inline">-->
+        <!--                                <input type="text" name="manageman" id="manageman" autocomplete="off" class="layui-input">-->
+        <!--                            </div>-->
+        <!--                        </div>-->
+        <!--                        <div class="layui-inline">-->
+        <!--                            <label class="layui-form-label">研究内容</label>-->
+        <!--                            <div class="layui-input-inline">-->
+        <!--                                <input type="text" name="requirecontent" autocomplete="off" class="layui-input">-->
+        <!--                            </div>-->
+        <!--                        </div>-->
+        <!--                        &lt;!&ndash;                        <div class="layui-inline">&ndash;&gt;-->
+        <!--                        &lt;!&ndash;                            <label class="layui-form-label">用户职业</label>&ndash;&gt;-->
+        <!--                        &lt;!&ndash;                            <div class="layui-input-inline">&ndash;&gt;-->
+        <!--                        &lt;!&ndash;                                <input type="text" name="classify" autocomplete="off" class="layui-input">&ndash;&gt;-->
+        <!--                        &lt;!&ndash;                            </div>&ndash;&gt;-->
+        <!--                        &lt;!&ndash;                        </div>&ndash;&gt;-->
+        <!--                        <div class="layui-inline">-->
+        <!--                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>-->
+        <!--                        </div>-->
+        <!--                    </div>-->
+        <!--                </form>-->
+        <!--            </div>-->
+        <!--        </fieldset>-->
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <!--                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>-->
+                <!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="look">查看</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="back">撤回</a>
+        </script>
+    </div>
+</div>
+
+
+
+
+
+
+<!--     -->
+
+
+<script>
+    var htmldata,id
+    layui.use(['form', 'table','miniPage','element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            miniPage = layui.miniPage;
+
+        table.render({
+            elem: '#currentTableId',
+            url: 'teacher/projectyes',
+            parseData: function(res){ //res 即为原始返回的数据
+
+
+            },
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips',
+                width:'100%',
+            }],
+            cols: [[
+                //  {type: "checkbox", width: 50},
+                {field: 'id', width: 80, title: 'ID', sort: true},
+                {field: 'projectname', width: 200, title: '题目'},
+                {field: 'proconstractcode', width: 160, title: '所属专业'},
+                {field: 'projectdemo', width: 240, title: '论文要求'},
+                {field: 'requirecontent', width:200, title: '主要研究内容'},
+                {field: 'infowritedate',  width: 160, title: '申报日期',sort:true},
+
+                {field: 'manageman', width: 80, title: '导师',  sort: true},
+
+                {title: '操作', minWidth: 200, toolbar: '#currentTableBar', align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            skin: 'line'
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+
+            console.log(data.field)
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    projectname:data.field.projectname,
+                    manageman:data.field.manageman,
+                    requirecontent:data.field.requirecontent,
+                }
+            }, 'data');
+
+            return false;
+        });
+
+
+
+
+
+        table.on('tool(currentTableFilter)', function (obj) {
+
+            if (obj.event === 'look') {
+
+                var content = miniPage.getHrefContent('page/public/project_info.html');
+                var openWH = miniPage.getOpenWidthHeight();
+                htmldata=obj.data
+                console.log(htmldata)
+                var index = layer.open({
+                    title: '查看选题',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content:content,
+                    success:function (){
+                        htmldata="";
+                    },
+                    end:function () {
+                        htmldata="";
+                    }
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (obj.event === 'back') {
+                id=obj.data.id;
+               // console.log(obj.data)
+                layer.confirm("确定撤回吗?",function (index) {
+
+                    $.ajax({
+                        url:'teacher/updatestate',
+                        data:{'id':id,"projectstate":"待审核"},
+                        method:'POST',
+                        async:false,
+                        success:function (res) {
+                            if(res.status==1){
+                                layer.msg(res.msg,function () {
+                                    table.reload('currentTableId', {page: {curr: 1}});
+                                })
+                            }else{
+                                layer.msg(res.msg)
+                            }
+
+                        }
+                    })
+                })
+                return false;
+
+            }
+
+        });
+
+    });
+</script>

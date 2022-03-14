@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.StudentMapper">
+    <select id="find_all" resultType="projectinfo">
+        select * from projectinfo
+        <where>
+            <if test="projectname!=null and projectname!=''">
+                and projectname like CONCAT('%',#{projectname,jdbcType=VARCHAR},'%')
+
+            </if>
+            <if test="manageman!=null and manageman!=''">
+                and manageman like CONCAT('%',#{manageman,jdbcType=VARCHAR},'%')
+
+            </if>
+            <if test="requirecontent!=null and requirecontent!=''">
+                and requirecontent like CONCAT('%',#{requirecontent,jdbcType=VARCHAR},'%')
+
+            </if>
+            and proconstractcode=#{proconstractcode} and projectstate="审核通过" and id NOT in(SELECT pmid FROM procurementorder WHERE appuser=#{username})
+        </where>
+    </select>
+
+    <select id="checkNum" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM procurementorder WHERE appuser=#{appuser}
+    </select>
+    
+    <insert id="insertOrder" >
+        insert into    procurementorder(pmid,state,appuser) values (#{pmid},"待确认",#{appuser})
+    </insert>
+    <select id="selectedPro" resultType="procurementorder">
+        select *
+        from  procurementorder where appuser=#{appuser};
+    </select>
+
+    <select id="findOne" resultType="projectinfo">
+        select * from projectinfo where id=#{id}
+    </select>
+
+    <select id="finishOrder" resultType="procurementorder">
+        select * from procurementorder where appuser=#{appuser} and state="已确认"
+    </select>
+
+    <insert id="uploadFile" >
+        insert  into document(name,pid,createusername,createuserid,filetype,path)
+            values (#{name},#{pid},#{createusername},#{createuserid},#{filetype},#{path})
+    </insert>
+    <select id="findAll" resultType="document">
+        select *
+        from document where createusername=#{createusername};
+    </select>
+
+    <select id="findBytype" resultType="document">
+        select * from document where createusername=#{createusername} and filetype=#{filetype}
+    </select>
+    <delete id="deleteFile">
+        delete
+        from document
+        where  id=#{id};
+    </delete>
+
+    <select id="checkFile" resultType="document">
+        select *
+        from document where createusername=#{createusername} and filetype=#{filetype};
+    </select>
+
+
+</mapper>

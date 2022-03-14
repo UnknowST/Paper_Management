@@ -1,0 +1,102 @@
+<style>
+    .layui-form-item .layui-input-company {width: auto;padding-right: 10px;line-height: 38px;}
+</style>
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <div class="layui-form layuimini-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">姓名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" id="name" lay-verify="required" lay-reqtext="姓名不能为空" placeholder="请输入姓名"  value="" class="layui-input">
+
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">邮编</label>
+                <div class="layui-input-block">
+                    <input type="text" name="postcode" id="postcode" lay-verify="required" lay-reqtext="邮编不能为空" placeholder="请输入邮编"  value="" class="layui-input">
+
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">手机</label>
+                <div class="layui-input-block">
+                    <input type="number" name="mobilephone" id="mobilephone" lay-verify="required" lay-reqtext="手机不能为空" placeholder="请输入手机"  value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="email" name="email" id="email" placeholder="请输入邮箱"  value="" class="layui-input">
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form','miniPage'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            miniPage = layui.miniPage,
+            $=layui.jquery;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        //获取用户原始数据并渲染在表格中
+        $.ajax({
+            url:'public/getuserinfo',
+            method:"POST",
+            async:false,
+            success:function (res) {
+                console.log(res)
+                if(res!=null){
+                    $("#name").val(res.name)
+                    $("#postcode").val(res.postcode)
+                    $("#mobilephone").val(res.mobilephone)
+                    $("#email").val(res.email)
+                }
+            }
+        })
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            $.ajax({
+                url: "public/updateinfo",
+                data:data.field,
+                method: "POST",
+                async: false,
+                success:function (res) {
+                    if(res.status==1){
+                        var index=  layer.msg(res.msg,function () {
+                            layer.close(index);
+                            miniPage.hashHome();
+                        })
+                    }else{
+                        layer.msg("修改失败!")
+                    }
+
+
+                }
+            })
+            return false;
+            // var index = layer.alert(JSON.stringify(data.field), {
+            //     title: '最终的提交信息'
+            // }, function () {
+            //     layer.close(index);
+            //     miniPage.hashHome();
+            // });
+            // return false;
+        });
+
+    });
+</script>

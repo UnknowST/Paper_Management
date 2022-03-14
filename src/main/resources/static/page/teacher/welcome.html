@@ -1,0 +1,131 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form" lay-filter="project">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">论文题目</label>
+            <div class="layui-input-block">
+                <input type="text" name="projectname" lay-verify="required" lay-reqtext="题目不能为空" placeholder="请输入题目"
+                       value="" class="layui-input">
+
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">所属专业</label>
+            <div class="layui-input-block">
+                <select name="proconstractcode" id="proconstractcode" lay-verify="required" class="layui-select">
+                    <option value="">请选择一个专业</option>
+                    <option value="空间信息与数字技术">空间信息与数字技术</option>
+                    <option value="软件工程">软件工程</option>
+                    <option value="计算机科学与技术">计算机科学与技术</option>
+                    <option value="信息与计算机科学">信息与计算机科学</option>
+                    <option value="数据科学与大数据技术">数据科学与大数据技术</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">论文要求</label>
+            <div class="layui-input-block">
+                <textarea name="projectdemo" placeholder="论文要求" required lay-verify="required" placeholder="请输入"
+                          class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">主要研究内容</label>
+            <div class="layui-input-block">
+                <textarea name="requirecontent" required lay-verify="required" placeholder="请输入"
+                          class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否自拟题</label>
+            <div class="layui-input-block">
+                <input type="radio" name="projectchange" id="projectchange" value="1" title="是" checked>
+                <input type="radio" name="projectchange" id="projectchange" value="0" title="否">
+
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认上传</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            $ = layui.$;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+       // console.log(parentIndex)
+        //获取 父页面数据
+        var htmldata = parent.htmldata;
+        if (typeof (htmldata) != 'undefined' || htmldata != null) {
+            //给表单赋值
+            form.val("project", {
+                "projectname": htmldata.projectname // "name": "value"
+                , "projectdemo": htmldata.projectdemo
+                , "requirecontent": htmldata.requirecontent
+                ,"proconstractcode":htmldata.proconstractcode
+            });
+
+
+            $('input[name=projectchange][value=' + htmldata.projectchange + ']').prop("checked", "true")
+            //form.render()
+        }
+        if (typeof (htmldata) == 'undefined' || htmldata == null) {
+            //监听提交
+            form.on('submit(saveBtn)', function (data) {
+
+                $.ajax({
+                    url: '../teacher/add_project',
+                    data: data.field,
+                    method: 'POST',
+                    async: false,
+                    success: function (res) {
+                        layer.alert(res.msg);
+                    }
+                })
+                return false;
+            });
+        } else {
+            //更新数据
+            form.on('submit(saveBtn)', function (data) {
+
+                $.ajax({
+                    url: '../teacher/update_p',
+                    data: {
+                        "projectname": data.field.projectname,
+                        "proconstractcode": data.field.proconstractcode,
+                        "projectdemo": data.field.projectdemo,
+                        "requirecontent": data.field.requirecontent,
+                        "projectchange": data.field.projectchange, "id": htmldata.id
+                    },
+                    method: 'POST',
+                    async: false,
+                    success: function (res) {
+                       if(res.status==0){
+                           layer.alert("修改失败")
+                       }
+                       else{
+                           layer.msg("修改成功")
+                       }
+                    }
+                })
+
+
+                return false;
+            });
+        }
+
+    });
+</script>

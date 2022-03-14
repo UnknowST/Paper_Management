@@ -1,0 +1,117 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <div class="title"></div>
+
+        <script type="text/html" id="toolbarDemo1">
+            <div class="layui-btn-container">
+                <!--                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>-->
+                <!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId1" lay-filter="currentTableFilter1"></table>
+
+        <script type="text/html" id="currentTableBar1">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="confirm">确定学生</a>
+            <!--            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
+
+        </script>
+
+    </div>
+</div>
+
+<style>
+    .title{
+        text-align: center;
+        font-size: 25px;
+        font-weight: bold;
+    }
+</style>
+
+
+
+<!--     -->
+
+
+<script>
+    var htmldata,pmid
+    layui.use(['form', 'table','miniPage','element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            miniPage = layui.miniPage;
+
+        htmldata=parent.htmldata;
+        pmid=htmldata.id;
+        $(".title").append(htmldata.projectname)
+        table.render({
+            elem: '#currentTableId1',
+            url: '../teacher/picklist?pmid='+htmldata.id,
+            parseData: function(res){ //res 即为原始返回的数据
+
+
+            },
+            title:htmldata.projectname,
+            toolbar: '#toolbarDemo1',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips',
+                width:'100%',
+            }],
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'username', width: 80, title: 'ID', sort: true},
+                {field: 'name', width: 200, title: '姓名'},
+                {field: 'sex', width: 160, title: '性别(1男0女)',sort:true},
+                {field: 'dept', width: 240, title: '专业'},
+                {field: 'email', width:200, title: '邮箱'},
+                {field: 'mobilephone',  width: 160, title: '联系方式'},
+
+                {title: '操作', minWidth: 200, toolbar: '#currentTableBar1', align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            skin: 'line'
+        });
+
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter1)', function (obj) {
+            // console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter1)', function (obj) {
+                data=obj.data
+            layer.confirm("一经确定便不可修改，你确定吗？",function () {
+                if (obj.event === 'confirm') {
+
+                    $.ajax({
+                        url: "../teacher/confirmPro",
+                        data:{'pmid':pmid,'appuser':data.username},
+                        method:'POST',
+                        async:false,
+                        success:function (res) {
+                            if(res.status==1){
+                                layer.msg(res.msg,function (index){
+                                    obj.del()
+                                    //obj.close(index)
+                                })
+                            }else{
+                                layer.msg(res.msg)
+                            }
+                        }
+                    })
+                    return false;
+
+
+                }
+            })
+
+
+        });
+
+    });
+</script>

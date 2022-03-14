@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.PublicMapper">
+
+    <update id="updateInfo">
+        update staffinfo set email=#{email},mobilephone=#{mobilephone},name=#{name},postcode=#{postcode} where username=#{username}
+    </update>
+
+    <update id="modifPassword">
+        update userinfo set password=#{newpassword} where username=#{username} and password=#{oldpassword}
+    </update>
+
+
+</mapper>

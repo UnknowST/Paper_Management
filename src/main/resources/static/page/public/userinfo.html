@@ -1,0 +1,80 @@
+
+<style>
+    .layui-form-item .layui-input-company {width: auto;padding-right: 10px;line-height: 38px;}
+</style>
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <div class="layui-form layuimini-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label ">姓名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" id="name" lay-verify="required" lay-reqtext="" placeholder=""  value="" class="layui-input">
+
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label ">邮编</label>
+                <div class="layui-input-block">
+                    <input type="text" name="postcode" id="postcode" lay-verify="required" lay-reqtext="" placeholder=""  value="" class="layui-input">
+
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label ">手机</label>
+                <div class="layui-input-block">
+                    <input type="number" name="mobilephone" id="mobilephone" lay-verify="" lay-reqtext="" placeholder=""  value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label ">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="email" name="email" id="email" placeholder=""  value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label ">专业</label>
+                <div class="layui-input-block">
+                    <input type="text" name="dept" id="dept" placeholder=""  value="" class="layui-input">
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    layui.use(['layer'], function () {
+        var $=layui.jquery,
+            layer=layui.layer;
+
+        var pmid=parent.pmid;
+
+        if(typeof(pmid)!='undefined'||pmid!=null){
+            $.ajax({
+                url:'teacher/getuserinfo',
+                method:'POST',
+                async:false,
+                data:{"pmid":pmid},
+                success:function (res) {
+                    $("#name").val(res.name)
+                    $("#postcode").val(res.postcode)
+                    $("#mobilephone").val(res.mobilephone)
+                    $("#email").val(res.email)
+                    $("#dept").val(res.dept)
+                    $("#name").attr("readonly","readonly");
+                    $("#postcode").attr("readonly","readonly");
+                    $("#mobilephone").attr("readonly","readonly");
+                    $("#email").attr("readonly","readonly");
+                    $("#dept").attr("readonly","readonly");
+                    proid=null;
+                }
+            })
+        }
+
+    });
+
+</script>

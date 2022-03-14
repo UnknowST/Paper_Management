@@ -1,0 +1,60 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "page/student/project_list.html"
+  },
+  "logoInfo": {
+    "title": "LAYUI MINI",
+    "image": "images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "Admin",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "用户管理",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self",
+          "child": [
+            {
+              "title": "学生账号",
+              "href": "page/admin/student_list.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "老师账号",
+              "href": "page/admin/teacher_list.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "系主任账号",
+              "href": "page/admin/dean_list.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "选题管理",
+          "href": "page/admin/projectmanage.html",
+          "icon": "fa fa-window-maximize",
+          "target": "_self",
+          "child": [
+
+
+          ]
+
+
+        }
+      ]
+    }
+
+  ]
+}

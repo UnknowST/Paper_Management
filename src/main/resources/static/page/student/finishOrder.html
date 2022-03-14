@@ -1,0 +1,126 @@
+<div class="body">
+    <div id="tip" style="display: none">还没有确认选题</div>
+    <div id="content" style="display: none;margin-top: 30px;margin-left: 150px" ></div>
+    <div class="layui-form layuimini-form" >
+        <div class="layui-form-item">
+            <label class="layui-form-label ">题目:</label>
+            <div class="layui-input-block">
+                <div class="name"></div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label ">论文要求:</label>
+            <div class="layui-input-block">
+                <div class="demo"></div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label ">主要研究内容:</label>
+            <div class="layui-input-block">
+                <div class="required"></div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属学院:</label>
+            <div class="layui-input-block">
+                <div class="collage"></div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">导师:</label>
+            <div class="layui-input-block">
+                <div class="teacher"></div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">是否是自选题:</label>
+            <div class="layui-input-block">
+                <div class="change"></div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">导师部门:</label>
+            <div class="layui-input-block">
+                <div class="dept"></div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">导师邮箱:</label>
+            <div class="layui-input-block">
+                <div class="email"></div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">联系方式:</label>
+            <div class="layui-input-block">
+                <div class="phone"></div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<style>
+    #tip{
+       text-align: center;
+        margin-left:200px;
+        margin-top: 200px;
+        font-size: 25px;
+        color: red;
+    }
+</style>
+
+<script type="text/javascript">
+    layui.use(['layer'], function () {
+        var $=layui.jquery,
+            layer=layui.layer;
+
+
+
+            $.ajax({
+                url:'student/finshOrder',
+                method:'POST',
+                async:false,
+                success:function (res) {
+                   if(res==null||res==""){
+
+                       $("#content").css("display","none")
+                       $("#tip").css("display","block");
+                   }else{
+                       //info=res;
+                       //获取选题信息 和老师信息
+
+                       $.ajax({
+                           url:'student/findinfo',
+                           data:{"id":res.pmid},
+                           Method: "POST",
+                           async: false,
+                           success:function (data) {
+                               // console.log(data[0].info)
+                               $("#tip").css("display","none");
+                               $("#content").css("display","block")
+                               $(".name").append(data[0].pro.projectname)
+                               $(".demo").append(data[0].pro.projectdemo)
+                               $(".required").append(data[0].pro.requirecontent)
+                               $(".collage").append(data[0].pro.proconstractcode)
+                               $(".teacher").append(data[0].pro.manageman)
+                               $(".dept").append(data[0].info.dept)
+                               $(".email").append(data[0].info.email)
+                               $(".phone").append(data[0].info.mobilephone)
+                               var change="否";
+                               if(data[0].pro.projectchange==1) change="是";
+                               $(".change").append(change)
+                           }
+                       })
+                   }
+
+                    proid=null;
+                }
+            })
+
+
+
+
+    });
+
+</script>

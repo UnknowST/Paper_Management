@@ -1,0 +1,45 @@
+
+
+spring:
+
+  datasource:
+    druid:
+      url: jdbc:mysql://121.37.165.227:3306/paper_manage?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+      username: paper
+      password: paperuser
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  ervlet:
+    multipart:
+      max-file-size: 200MB #单个文件上传大小
+      max-request-size: 600MB #连续上传文件大小
+
+
+
+# mybatis
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml # mapper映射文件路径
+  type-aliases-package: com.daomain
+
+  # config-location:  # 指定mybatis的核心配置文件
+
+#logging:
+#  # 设置logback.xml位置
+#  #  config: classpath:log/logback.xml
+#  # 设置log4j.properties位置
+#  config: classpath:log4j.properties
+#
+logging:
+  level:
+    root: info
+
+
+# pagehelper
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+server:
+  port: 8081
+  context-path: /paper_manage

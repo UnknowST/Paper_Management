@@ -1,0 +1,68 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">审批</label>
+            <div class="layui-input-block">
+              <select id="projectstate" name="projectstate">
+                  <option id="审核通过">审核通过</option>
+                  <option id="驳回">驳回</option>
+              </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">审批结论</label>
+            <div class="layui-input-block">
+               <textarea id="contractsigndate" name="contractsigndate" style="width: 500px;height: 100px"></textarea>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            $ = layui.$;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+        var id=parent.id;
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            data=data.field
+            $.ajax({
+                url:'teacher/updatestate',
+                data:{"projectstate":data.projectstate,"contractsigndate":data.contractsigndate,"id":id},
+                method:"POST",
+                async:false,
+                success:function (res) {
+                    if(res.status==1){
+                        layer.msg(res.msg,function () {
+                            layer.close(parentIndex)
+                            //table 重加载
+                            parent.layui.table.reload('currentTableId', {page: {curr: 1}});
+                        })
+                    }else{
+                        layer.msg(res.msg);
+                    }
+                }
+            })
+
+            return false;
+        });
+
+    });
+</script>

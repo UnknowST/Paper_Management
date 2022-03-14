@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.TeacherMapper">
+    <insert id="insert_project">
+        insert into projectinfo(projectname, proconstractcode, projectdemo, requirecontent, infowriteman, manageman,
+                                projectchange)
+        values (#{projectname}, #{proconstractcode}, #{projectdemo}, #{requirecontent}, #{infowriteman}, #{manageman},
+                #{projectchange})
+    </insert>
+
+    <select id="select_all" resultType="projectinfo">
+        select *
+        from projectinfo
+        where infowriteman = #{infowriteman}
+    </select>
+    <delete id="delete_project">
+        delete
+        from projectinfo
+        where id = #{id}
+    </delete>
+    <update id="update_p">
+        update projectinfo
+        set projectname=#{projectname},
+            proconstractcode=#{proconstractcode},
+            projectdemo=#{projectdemo},
+            requirecontent=#{requirecontent},
+            projectchange=#{projectchange}
+        where id = #{id}
+    </update>
+
+    <select id="confirmList" resultType="projectinfo">
+        select *
+        from projectinfo
+        where infowriteman = #{infowriteman} and projectstate="审核通过"
+    </select>
+
+    <select id="pickList" resultType="staffinfo">
+        SELECT * FROM staffinfo WHERE username IN (SELECT appuser FROM procurementorder WHERE pmid=#{pmid} AND state='待确认')
+    </select>
+
+    <update id="confirmPro" >
+        update procurementorder set state="已确认" where pmid=#{pmid} and appuser=#{appuser}
+    </update>
+    <update id="confirmPro_2">
+        update projectinfo set projectstate="已确认" where id=#{id}
+    </update>
+
+    <select id="checkUser" resultType="procurementorder">
+        select * from procurementorder where appuser=#{appuser} and state="已确认"
+    </select>
+    <select id="ProconfirmList" resultType="projectinfo">
+        select * from projectinfo where projectstate="已确认" and infowriteman=#{infowriteman}
+    </select>
+    <select id="userinfo" resultType="staffinfo">
+        SELECT * FROM staffinfo WHERE username IN (SELECT appuser FROM procurementorder WHERE pmid=#{pmid} AND state='已确认')
+    </select>
+
+    <select id="fileList" resultType="document">
+        SELECT * FROM document WHERE createusername IN( SELECT appuser FROM procurementorder WHERE pmid=#{pmid})
+    </select>
+
+    <select id="projectinfoNo" resultType="projectinfo">
+        SELECT * FROM projectinfo WHERE proconstractcode=#{proconstractcode} AND projectstate="待审核" ORDER BY infowritedate  DESC
+    </select>
+
+    <select id="projectinfoYes" resultType="projectinfo">
+        SELECT * FROM projectinfo WHERE proconstractcode=#{proconstractcode} AND projectstate="审核通过" ORDER BY infowritedate  DESC
+    </select>
+
+    <select id="projectinfoRe" resultType="projectinfo">
+        SELECT * FROM projectinfo WHERE proconstractcode=#{proconstractcode} AND projectstate="驳回" ORDER BY infowritedate  DESC
+    </select>
+    <update id="updatState">
+        update projectinfo set projectstate=#{projectstate},contractsigndate=#{contractsigndate} where id=#{id}
+    </update>
+</mapper>

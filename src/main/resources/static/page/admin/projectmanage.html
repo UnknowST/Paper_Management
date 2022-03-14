@@ -1,0 +1,256 @@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+                <fieldset class="table-search-fieldset">
+                    <legend>搜索信息</legend>
+                    <div style="margin: 10px 10px 10px 10px">
+                        <form class="layui-form layui-form-pane" action="">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">标题</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="projectname" id="projectname" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">所属专业</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="proconstractcode" id="proconstractcode" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">选题状态</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="projectstate"  id="projectstate" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">申报人</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="infowriteman" id="infowriteman" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">研究内容</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="requirecontent" id="requirecontent" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
+<!--                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="content"> 查看审批结论 </button>-->
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="look">查看申报人信息</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+
+        </script>
+
+    </div>
+</div>
+
+
+
+
+
+
+<!--     -->
+
+
+<script>
+    var htmldata,username
+    layui.use(['form', 'table','miniPage','element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            miniPage = layui.miniPage;
+
+        table.render({
+            elem: '#currentTableId',
+            url: 'admin/prolist',
+            parseData: function(res){ //res 即为原始返回的数据
+
+
+            },
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips',
+                width:'100%',
+                title:'选题列表',
+            }],
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'id', width: 80, title: 'ID', sort: true},
+                {field: 'projectname', width: 200, title: '题目'},
+                {field: 'proconstractcode', width: 160, title: '所属专业'},
+                {field: 'projectdemo', width: 240, title: '论文要求'},
+                {field: 'requirecontent', width:200, title: '主要研究内容'},
+                {field: 'infowritedate',  width: 160, title: '申报日期',sort:true},
+
+                {field: 'projectstate', width: 100, title: '状态', style:"color:red", sort: true},
+
+                {title: '操作', minWidth: 200, toolbar: '#currentTableBar', align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            skin: 'line'
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+
+
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    projectname:data.field.projectname,
+                    proconstractcode:data.field.proconstractcode,
+                    projectstate:data.field.projectstate,
+                    infowriteman:data.field.infowriteman,
+                    requirecontent:data.field.requirecontent
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        /**
+         * toolbar事件监听
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+
+            if (obj.event === 'delete') {  // 监听删除操作
+                //实现批量删除
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                //var data= JSON.stringify(data)
+                //console.log(checkStatus.data[0].id)
+
+                var id= new Array();
+                for(var i=0;i<checkStatus.data.length;++i)
+                {
+                    id.push(checkStatus.data[i].id);
+
+                }
+                layer.confirm('真的要删除该选题的所有记录吗?', function (index) {
+
+                    $.ajax({
+                        url:'admin/deletepro',
+                        data:{"id":id},
+                        method: "POST",
+                        async: false,
+                        traditional: true,// 传递数组的时候 需要设置为true
+                        success:(res)=>{
+                            if(res.status==1)
+                            {
+                                layer.msg(res.msg, function(){
+                                    // 修改为重载
+                                    table.reload('currentTableId',{page:{curr:1}});
+                                });
+
+                            }
+                            else
+                                layer.msg(res.msg)
+                        },
+                        error: function (res) {
+                            if (res.status == 500)
+                                window.location = 'page/500.html'
+                            else if (res.status == 404)
+                                window.location = 'page/404.html'
+                        }
+                    })
+
+                });
+
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            // console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+
+            if (obj.event === 'look') {
+
+                username=obj.data.infowriteman
+                //console.log(obj.data.infowriteman)
+                var content = miniPage.getHrefContent('page/admin/userinfo.html');
+                var openWH = miniPage.getOpenWidthHeight();
+                //htmldata=obj.data
+                //console.log(htmldata)
+                var index = layer.open({
+                    title: '申报人信息',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content:content,
+                    success:function (){
+                        username="";
+                    },
+                    end:function () {
+                        username="";
+                    }
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (obj.event === 'delete') {
+
+                layer.confirm('真的要删除该选题的所有信息吗?', function (index) {
+                    $.ajax({
+                        url:"admin/deletepro",
+                        method:'POST',
+                        async:false,
+                        data:{"id":obj.data.id},
+                        success:(res)=>{
+                            if(res.status==1){
+                                layer.msg(res.msg,function () {
+                                    obj.del();
+                                    layer.close(index);
+                                })
+
+                            }else{
+                                layer.msg(res.msg);
+                            }
+                        },
+                        error: function (res) {
+                            if (res.status == 500)
+                                window.location = 'page/500.html'
+                            else if (res.status == 404)
+                                window.location = 'page/404.html'
+                        }
+                    })
+
+                });
+            }
+
+        });
+
+    });
+</script>

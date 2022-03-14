@@ -1,0 +1,220 @@
+<script type="text/html" id="currentTableBar">
+    <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="uploadfile">文件上传</a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除文件</a>
+</script>
+<table lay-filter="demo">
+    <thead>
+    <tr>
+        <th lay-data="{field:'num', width:80 }">编号</th>
+        <th lay-data="{field:'name', width:100}">任务名称</th>
+        <th lay-data="{field:'dateline', width:100,style:'color:red'}">截止日期</th>
+        <th lay-data="{field:'filename',width:300}">文件名称</th>
+        <th lay-data="{field:'state' ,width:80}">状态</th>
+
+        <th lay-data="{fixed: 'right', width:200, align:'center', toolbar: '#currentTableBar'}"></th>
+    </tr>
+
+    </thead>
+    <tbody>
+    <tr id="001">
+        <td>001</td>
+        <td>开题报告</td>
+        <td>2021-02-01</td>
+        <td id="file001"></td>
+        <td id="state001">进行中</td>
+
+    </tr>
+    <tr>
+        <td>002</td>
+        <td>文献综述</td>
+        <td>2021-02-20</td>
+        <td id="file002"></td>
+        <td id="state002">进行中</td>
+
+    </tr>
+    <tr>
+        <td>003</td>
+        <td>外文翻译</td>
+        <td>2021-02-25</td>
+        <td id="file003"></td>
+        <td id="state003">进行中</td>
+
+    </tr>
+    <tr>
+        <td>004</td>
+        <td>中期检查表</td>
+        <td>2021-03-15</td>
+        <td id="file004"></td>
+        <td id="state004">进行中</td>
+
+    </tr>
+
+    <tr>
+        <td>005</td>
+        <td>论文提交</td>
+        <td>2021-04-15</td>
+        <td id="file005"></td>
+        <td id="state005">进行中</td>
+
+    </tr>
+
+    </tbody>
+
+</table>
+
+
+<script type="text/javascript">
+    function getfile(filename, path) {
+
+        layui.use(['layer', 'table', 'miniPage', 'element'], function () {
+            var $ = layui.jquery;
+            var url = "http://121.37.165.227:8081/student/getfile";   // 路径要修改
+            var form = $("<form></form>").attr("action", url).attr("method", "post");
+            form.append($("<input></input>").attr("type", "hidden").attr("name", "name").attr("value", filename));
+            form.append($("<input></input>").attr("type", "hidden").attr("name", "path").attr("value", path));
+            form.appendTo('body').submit().remove();
+        })
+
+    }
+
+    layui.use(['layer', 'table', 'miniPage', 'element'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            table = layui.table,
+            miniPage = layui.miniPage;
+
+        //转换静态表格
+        table.init('demo', {
+            height: 315 //设置高度
+            , limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+            //支持所有基础参数
+        });
+        //全局数据 用来保存文件信息
+        var fileinfo;
+
+        addinfo();
+
+
+        table.on('tool(demo)', function (obj) {
+            var data = obj.data; //获得当前行数据
+           // console.log(data)
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+            if (layEvent === 'uploadfile') {
+                var content = miniPage.getHrefContent('page/public/uploadFile.html');
+                var openWH = miniPage.getOpenWidthHeight();
+                htmldata = obj.data
+              //  console.log(htmldata)
+                var index = layer.open({
+                    title: '文件上传',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                    success: function () {
+                        htmldata = "";
+                    },
+                    end: function () {
+                        htmldata = "";
+                        addinfo()
+                        //转换静态表格
+                        table.init('demo', {
+                            height: 315 //设置高度
+                            , limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+                            //支持所有基础参数
+                        });
+                    },
+                    cancel:function () {
+                        htmldata = "";
+                        addinfo()
+                        //转换静态表格
+                        table.init('demo', {
+                            height: 315 //设置高度
+                            , limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+                            //支持所有基础参数
+                        });
+                    }
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (layEvent === 'delete') {
+
+                if(data.filename=="")  {
+                    layer.msg("当前还没上传任何文件!")
+                    return  false;
+                }
+
+                layer.confirm("真的要删除吗？", function (index) {
+
+                    $.ajax({
+                        url: 'student/deleteFile',
+                        data: {"filetype": data.num},
+                        method: 'POST',
+                        async: false,
+                        success:function (res) {
+                           if(res.status==1){
+                               layer.msg(res.msg,function () {
+                                   $('#file' + data.num + '').html('')
+                                   $('#state' + data.num + '').text("进行中")
+                                   //转换静态表格
+                                   table.init('demo', {
+                                       height: 315 //设置高度
+                                       , limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+                                       //支持所有基础参数
+                                   });
+                               })
+                           }else{
+                               layer.msg(res.msg)
+                           }
+
+                        }
+                    })
+
+                })
+            }
+        })
+
+
+
+
+        function addinfo() {
+            //获取已上传数据进行填充
+            $.ajax({
+                url: 'student/findAll',
+                method: 'GET',
+                async: false,
+                success: function (res) {
+                    if (res != null) {
+                        fileinfo = res;
+                        for (var i = 0; i < res.length; ++i) {
+                            var type = res[i].filetype;
+                            var t1 = $('#' + type + '').children()[3]
+                            var t2 = $('#' + type + '').children()[4]
+                            //t1.append(res[i].name)
+                            filename = res[i].name
+
+                            path = res[i].path
+                            $('#file' + type + '').html('<a   href="javascript:void(0)"  style="color: #00a2d4" onclick="getfile(filename,path)">' + res[i].name + '')
+                            $('#state' + type + '').text("已上传")
+                        }
+                        //转换静态表格
+                        table.init('demo', {
+                            height: 315 //设置高度
+                            , limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+                            //支持所有基础参数
+                        });
+                    }
+                }
+            })
+        }
+
+
+    });
+
+
+</script>
