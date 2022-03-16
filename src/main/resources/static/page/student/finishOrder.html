@@ -1,6 +1,8 @@
 <div class="body">
     <div id="tip" style="display: none">还没有确认选题</div>
-    <div id="content" style="display: none;margin-top: 30px;margin-left: 150px" ></div>
+
+
+    <div id="content" style="display: none;margin-top: 30px;margin-left: 150px" >
     <div class="layui-form layuimini-form" >
         <div class="layui-form-item">
             <label class="layui-form-label ">题目:</label>
@@ -60,6 +62,7 @@
 
     </div>
 </div>
+</div>
 <style>
     #tip{
        text-align: center;
@@ -82,14 +85,16 @@
                 method:'POST',
                 async:false,
                 success:function (res) {
-                   if(res==null||res==""){
+
+                   if(res==null||res==""||res.length==0){
 
                        $("#content").css("display","none")
                        $("#tip").css("display","block");
                    }else{
                        //info=res;
                        //获取选题信息 和老师信息
-
+                       $("#content").css("display","block")
+                       $("#tip").css("display","none");
                        $.ajax({
                            url:'student/findinfo',
                            data:{"id":res.pmid},

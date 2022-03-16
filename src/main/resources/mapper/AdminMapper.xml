@@ -37,8 +37,8 @@
             <if test="mobilephone !=null and mobilephone!=''">
                 mobilephone,
             </if>
-            <if test="email !=null  and email!=''">
-                email,
+            <if test="postcode !=null  and postcode!=''">
+                postcode,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -49,8 +49,8 @@
             <if test="mobilephone !=null and mobilephone!=''">
                 #{ mobilephone},
             </if>
-            <if test="email !=null  and email!=''">
-                #{email},
+            <if test="postcode !=null  and postcode!=''">
+                #{postcode},
             </if>
         </trim>
 
@@ -107,7 +107,7 @@
 
     <update id="updateStaffinfo">
         update staffinfo
-        set sex=#{sex} ,name=#{name},mobilephone=#{mobilephone},email=#{email},postcode=#{postcode},dept=#{dept}
+        set sex=#{sex} ,name=#{name},mobilephone=#{mobilephone},postcode=#{postcode},dept=#{dept}
         where username=#{username};
     </update>
 
