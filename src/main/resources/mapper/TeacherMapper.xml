@@ -56,7 +56,7 @@
     </select>
 
     <select id="fileList" resultType="document">
-        SELECT * FROM document WHERE createusername IN( SELECT appuser FROM procurementorder WHERE pmid=#{pmid})
+        SELECT * FROM document WHERE createusername IN (SELECT appuser FROM procurementorder WHERE pmid=#{pmid} AND state="已确认")
     </select>
 
     <select id="projectinfoNo" resultType="projectinfo">

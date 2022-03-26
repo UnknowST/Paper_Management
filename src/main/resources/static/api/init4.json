@@ -1,7 +1,7 @@
 {
   "homeInfo": {
-    "title": "首页",
-    "href": "page/student/project_list.html"
+    "title": "首页2",
+    "href": "page/admin/student_list.html"
   },
   "logoInfo": {
     "title": "Paper Manage",
