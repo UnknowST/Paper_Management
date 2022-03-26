@@ -4,13 +4,13 @@
     "href": "page/teacher/welcome.html"
   },
   "logoInfo": {
-    "title": "LAYUI MINI",
+    "title": "Paper Manage",
     "image": "images/logo.png",
     "href": ""
   },
   "menuInfo": [
     {
-      "title": "常规管理",
+      "title": "系主任界面",
       "icon": "fa fa-address-book",
       "href": "",
       "target": "_self",
