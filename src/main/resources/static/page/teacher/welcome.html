@@ -69,6 +69,7 @@
        // console.log(parentIndex)
         //获取 父页面数据
         var htmldata = parent.htmldata;
+        //console.log(htmldata)
         if (typeof (htmldata) != 'undefined' || htmldata != null) {
             //给表单赋值
             form.val("project", {
@@ -82,7 +83,7 @@
             $('input[name=projectchange][value=' + htmldata.projectchange + ']').prop("checked", "true")
             //form.render()
         }
-        if (typeof (htmldata) == 'undefined' || htmldata == null) {
+        if (typeof (htmldata) === 'undefined' || htmldata === null|| htmldata==="") {
             //监听提交
             form.on('submit(saveBtn)', function (data) {
 
@@ -98,6 +99,7 @@
                 return false;
             });
         } else {
+            //
             //更新数据
             form.on('submit(saveBtn)', function (data) {
 
@@ -117,7 +119,11 @@
                            layer.alert("修改失败")
                        }
                        else{
-                           layer.msg("修改成功")
+                           layer.msg("修改成功",function () {
+                               htmldata=""
+                               layer.close(parentIndex)
+                           })
+
                        }
                     }
                 })
