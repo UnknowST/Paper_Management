@@ -4,7 +4,7 @@ spring:
 
   datasource:
     druid:
-      url: jdbc:mysql://121.37.165.227:3306/paper_manage?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+      url: jdbc:mysql://localhost:3306/paper_manage?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
       username: paper
       password: paperuser
       driver-class-name: com.mysql.cj.jdbc.Driver
